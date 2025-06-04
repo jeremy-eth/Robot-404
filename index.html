@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Lost Robot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0f0f1a;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .robot {
+            width: 150px;
+            height: 200px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.5s linear;
+        }
+
+        .head {
+            width: 100px;
+            height: 80px;
+            background: #555;
+            border-radius: 50px 50px 0 0;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .eyes {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding-top: 20px;
+        }
+
+        .eye {
+            width: 15px;
+            height: 20px;
+            background: #00ffcc;
+            border-radius: 50%;
+            animation: blink 4s infinite;
+        }
+
+        .body {
+            width: 100px;
+            height: 100px;
+            background: #777;
+            border-radius: 10px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .panel {
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ff5555;
+            font-weight: bold;
+            font-size: 12px;
+            animation: flicker 1s infinite alternate;
+        }
+
+        .arm {
+            position: absolute;
+            width: 20px;
+            height: 60px;
+            background: #666;
+            top: 80px;
+        }
+
+        .arm.left {
+            left: -20px;
+            transform: rotate(20deg);
+            animation: arm-move-left 2s infinite alternate;
+        }
+
+        .arm.right {
+            right: -20px;
+            transform: rotate(-20deg);
+            animation: arm-move-right 2s infinite alternate;
+        }
+
+        .error-msg {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            color: #ff5555;
+        }
+
+        p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .btn {
+            background: #00ffcc;
+            color: #0f0f1a;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #ff5555;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Animations */
+        @keyframes blink {
+            0%, 45%, 55%, 100% { height: 20px; }
+            50% { height: 5px; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes arm-move-left {
+            0% { transform: rotate(20deg); }
+            100% { transform: rotate(10deg); }
+        }
+
+        @keyframes arm-move-right {
+            0% { transform: rotate(-20deg); }
+            100% { transform: rotate(-10deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="robot">
+            <div class="head">
+                <div class="eyes">
+                    <div class="eye"></div>
+                    <div class="eye"></div>
+                </div>
+            </div>
+            <div class="arm left"></div>
+            <div class="body">
+                <div class="panel">404</div>
+            </div>
+            <div class="arm right"></div>
+        </div>
+        <div class="error-msg">
+            <h1>404</h1>
+            <p>Oops! The robot got lost in space.</p>
+            <button class="btn" onclick="window.location.href='/'">Take Me Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Make the robot wander around randomly
+        const robot = document.querySelector('.robot');
+        const container = document.querySelector('.container');
+        const containerRect = container.getBoundingClientRect();
+        
+        let posX = containerRect.width / 2;
+        let posY = containerRect.height / 2;
+        let speedX = (Math.random() - 0.5) * 4;
+        let speedY = (Math.random() - 0.5) * 4;
+
+        function updateRobotPosition() {
+            posX += speedX;
+            posY += speedY;
+
+            // Collision detection with edges
+            if (posX <= 75 || posX >= containerRect.width - 75) {
+                speedX *= -1;
+            }
+            if (posY <= 100 || posY >= containerRect.height - 100) {
+                speedY *= -1;
+            }
+
+            robot.style.left = `${posX}px`;
+            robot.style.top = `${posY}px`;
+
+            // Random direction change occasionally
+            if (Math.random() < 0.02) {
+                speedX = (Math.random() - 0.5) * 4;
+                speedY = (Math.random() - 0.5) * 4;
+            }
+
+            requestAnimationFrame(updateRobotPosition);
+        }
+
+        // Eyes follow mouse
+        document.addEventListener('mousemove', (e) => {
+            const eyes = document.querySelectorAll('.eye');
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            eyes.forEach(eye => {
+                const rect = eye.getBoundingClientRect();
+                const eyeX = rect.left + rect.width / 2;
+                const eyeY = rect.top + rect.height / 2;
+                const angle = Math.atan2(y - eyeY, x - eyeX) * 180 / Math.PI;
+                eye.style.transform = `rotate(${angle}deg)`;
+            });
+        });
+
+        // Start robot movement
+        updateRobotPosition();
+    </script>
+</body>
+</html>
